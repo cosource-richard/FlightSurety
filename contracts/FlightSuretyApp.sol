@@ -1,4 +1,4 @@
-pragma solidity ^0.4.25;
+pragma solidity >=0.4.24;
 
 // It's important to avoid vulnerabilities due to numeric overflow bugs
 // OpenZeppelin's SafeMath library, when used correctly, protects agains such bugs
@@ -24,7 +24,12 @@ contract FlightSuretyApp {
     uint8 private constant STATUS_CODE_LATE_TECHNICAL = 40;
     uint8 private constant STATUS_CODE_LATE_OTHER = 50;
 
+    //Costs
+    uint AIRLINE_FEE = 10000;
+    uint INSURANCE_FEE = 1000;
+
     address private contractOwner;          // Account used to deploy contract
+    FlightSuretyData flightSuretyData;
 
     struct Flight {
         bool isRegistered;
@@ -33,6 +38,10 @@ contract FlightSuretyApp {
         address airline;
     }
     mapping(bytes32 => Flight) private flights;
+
+    uint constant M = 2;
+    uint8 constant N = 4;  //Number of Airlines that can register without consensus 
+    address[] multiCalls = new address[](0);
 
  
     /********************************************************************************************/
@@ -63,6 +72,25 @@ contract FlightSuretyApp {
         _;
     }
 
+    modifier registeredAirline()
+    {
+        require(flightSuretyData.isAirline(msg.sender), "Airline is not registered");
+        _;
+    }
+
+      // Define a modifier that checks if the paid amount is sufficient to cover the price
+    modifier paidEnough(uint _price) { 
+        require(msg.value >= _price); 
+        _;
+    }
+    
+    // Define a modifier that checks the price and refunds the remaining balance
+    modifier checkValue(uint _price) {
+        _;
+        uint amountToReturn = msg.value - _price;
+        msg.sender.transfer(amountToReturn);
+    }
+
     /********************************************************************************************/
     /*                                       CONSTRUCTOR                                        */
     /********************************************************************************************/
@@ -73,10 +101,14 @@ contract FlightSuretyApp {
     */
     constructor
                                 (
+                                    address dataContract,
+                                    address firstAirline                           
                                 ) 
                                 public 
     {
         contractOwner = msg.sender;
+        flightSuretyData = FlightSuretyData(dataContract);
+        flightSuretyData.registerAirline(firstAirline);
     }
 
     /********************************************************************************************/
@@ -95,6 +127,27 @@ contract FlightSuretyApp {
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
 
+    function voteForAirline
+                        (
+                            address airline
+                        ) public 
+                        registeredAirline
+                        returns(uint)
+    
+    {
+        bytes32 key = keccak256(msg.sender, airline);
+        flightSuretyData.updateVote(airline, key);    
+    }   
+
+    function addAirline
+                (
+                    string memory code,
+                    string memory name,
+                    address wallet
+                )
+    {
+        flightSuretyData.insertAirline(code, name, wallet);
+    }
   
    /**
     * @dev Add an airline to the registration queue
@@ -102,14 +155,58 @@ contract FlightSuretyApp {
     */   
     function registerAirline
                             (   
+                                address newAirline
                             )
-                            external
-                            pure
+                            public
+                            registeredAirline
                             returns(bool success, uint256 votes)
     {
-        return (success, 0);
+        uint noOfVotes;
+        uint noOfVotesRequired;
+        uint noOfAirlines = flightSuretyData.countRegisteredAirlines();
+
+        if (noOfAirlines < N) {            
+            success = true;
+        } else {               
+                noOfVotes = flightSuretyData.countAirlineVotes(newAirline);
+                require(noOfVotes != 0, "Airline does not have any votes"); //Protect against 0 
+                noOfVotesRequired = (noOfAirlines / M) + (noOfAirlines % M);
+                require(noOfVotes >= noOfVotesRequired, "Airline does not have enough votes");
+                success = true;
+        }
+
+        if (success){
+            flightSuretyData.registerAirline(newAirline); 
+        }
+        return (success, noOfVotes);
     }
 
+    function fund()
+        payable
+        public
+    {
+        //gasleft();
+        address(flightSuretyData).transfer(msg.value);
+        flightSuretyData.fundAirline(msg.sender);
+
+        //flightSuretyData.fund();
+    }
+
+    function getBalance()
+        view
+        public
+        returns (uint balance)
+    {
+        return flightSuretyData.getBalance();
+    }
+
+    function getAirlines()
+                            view
+                            external
+                            returns(address[])
+    {
+        return flightSuretyData.getFundedAirlines();
+    }
 
    /**
     * @dev Register a future flight for insuring.
@@ -334,4 +431,17 @@ contract FlightSuretyApp {
 
 // endregion
 
-}   
+}  
+
+contract FlightSuretyData {
+    function insertAirline(string code, string name, address wallet) external;
+    function registerAirline(address airline) external;
+    function isAirline(address airline) view external returns(bool);
+    function countRegisteredAirlines() view external returns(uint);
+    function updateVote(address airline, bytes32 key) external;
+    function countAirlineVotes(address airline) view  external returns (uint);
+    function fund() payable external;
+    function fundAirline(address airline) external;
+    function getFundedAirlines()external view returns (address[]);
+    function getBalance() external returns (uint balance);
+}

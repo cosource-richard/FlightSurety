@@ -1,4 +1,4 @@
-pragma solidity ^0.4.25;
+pragma solidity >=0.4.24;
 
 import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 
@@ -11,6 +11,23 @@ contract FlightSuretyData {
 
     address private contractOwner;                                      // Account used to deploy contract
     bool private operational = true;                                    // Blocks all state changes throughout the contract if false
+
+    struct Airline {
+        string code;
+        string name;
+        uint votes;
+        bool hasSubmittedFunds;
+        bool isRegistered;
+    }
+
+    mapping (address => Airline) airlines;
+    address[] registeredAirlines;
+
+    address[] fundedAirlines;
+    //mapping (address => bool) fundedAirlines;
+
+    mapping (bytes32 => address) votes;
+    mapping (address => uint) airlineVotes;
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -56,6 +73,12 @@ contract FlightSuretyData {
         _;
     }
 
+    modifier hasNotVoted(bytes32 key)
+    {
+        require(votes[key] == address(0x0), "Has already voted");
+        _;
+    }
+
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
@@ -93,6 +116,20 @@ contract FlightSuretyData {
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
 
+
+
+    function insertAirline
+                (
+                    string code,
+                    string  name,
+                    address wallet
+                )
+    {
+        var airline = airlines[wallet];
+        airline.code = code;
+        airline.name = name;
+    }
+
    /**
     * @dev Add an airline to the registration queue
     *      Can only be called from FlightSuretyApp contract
@@ -100,10 +137,54 @@ contract FlightSuretyData {
     */   
     function registerAirline
                             (   
+                                address airline
                             )
                             external
-                            pure
     {
+        airlines[airline].isRegistered = true;
+        registeredAirlines.push(airline) -1;
+    }
+
+    function isAirline
+                            (   
+                                address airline
+                            )
+                            external
+                            returns(bool)
+    {
+        return airlines[airline].isRegistered;
+    }
+
+    function countRegisteredAirlines() 
+                            public 
+                            view 
+                            returns(uint) 
+    {
+        return registeredAirlines.length;
+    }
+
+
+     /**
+    * @dev Add an airline to the registration queue
+    *      Can only be called from FlightSuretyApp contract
+    *
+    */   
+    function fundAirline
+                            (   
+                                address airline
+                            )
+                            external
+    {
+        airlines[airline].hasSubmittedFunds = true;
+        fundedAirlines.push(airline) -1;
+    }
+
+    function getFundedAirlines()
+                        external
+                        view
+                        returns (address[])
+    {
+        return fundedAirlines;
     }
 
 
@@ -151,10 +232,23 @@ contract FlightSuretyData {
     */   
     function fund
                             (   
+                              
                             )
                             public
                             payable
     {
+        
+    }
+
+    function getBalance
+                        (
+
+                        )
+                        external
+                        view
+                        returns (uint balance)
+    {
+        return address(this).balance;
     }
 
     function getFlightKey
@@ -168,6 +262,29 @@ contract FlightSuretyData {
                         returns(bytes32) 
     {
         return keccak256(abi.encodePacked(airline, flight, timestamp));
+    }
+
+    function updateVote
+                        (
+                            address airline,
+                            bytes32 key
+                        )  
+                        external
+                        hasNotVoted(key)
+    {
+        airlineVotes[airline]++;
+        votes[key] = airline;
+    }
+
+    function countAirlineVotes
+                        (
+                            address airline
+                        )
+                        view  
+                        external
+                        returns (uint)
+    {
+        return airlineVotes[airline];
     }
 
     /**
