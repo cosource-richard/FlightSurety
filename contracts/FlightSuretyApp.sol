@@ -214,12 +214,18 @@ contract FlightSuretyApp {
     */  
     function registerFlight
                                 (
+                                    string number,
+                                    string from,
+                                    string to,
+                                    uint departure,
+                                    uint arrival            
                                 )
                                 external
-                                pure
     {
-
+        flightSuretyData.insertFlight(number, from, to, departure, arrival);
     }
+
+
     
    /**
     * @dev Called after oracle has updated flight status
@@ -444,4 +450,5 @@ contract FlightSuretyData {
     function fundAirline(address airline) external;
     function getFundedAirlines()external view returns (address[]);
     function getBalance() external returns (uint balance);
+     function insertFlight(string number, string from, string to, uint departure, uint arrival) external;
 }

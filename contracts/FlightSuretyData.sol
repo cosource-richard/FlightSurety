@@ -20,6 +20,23 @@ contract FlightSuretyData {
         bool isRegistered;
     }
 
+    struct Insurance {
+        address purchaser;
+        uint amount;
+    }
+
+    struct Flight {
+        string number;
+        string from;
+        string to;
+        uint departure;
+        uint arrival;
+    }
+
+    Flight[] flights;
+
+    mapping (string => Insurance[]) flightInsurance;
+
     mapping (address => Airline) airlines;
     address[] registeredAirlines;
 
@@ -188,10 +205,36 @@ contract FlightSuretyData {
     }
 
 
+  /**
+    * @dev Flights
+    *
+    */   
+  function insertFlight
+                            (        
+                                string number,
+                                string from,
+                                string to,
+                                uint departure,
+                                uint arrival                     
+                            )
+                            external 
+    {
+        Flight flight;
+        flight.number = number;
+        flight.from = from; 
+        flight.to = to;
+        flight.departure = departure;
+        flight.arrival = arrival;
+
+
+        flights.push(flight) -1;
+    }
+
    /**
     * @dev Buy insurance for a flight
     *
     */   
+
     function buy
                             (                             
                             )

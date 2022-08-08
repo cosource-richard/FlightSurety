@@ -5,6 +5,9 @@ export default class DOM {
     static a = (...args) => DOM.makeElement(`a`, ...args);
     static button = (...args) => DOM.makeElement(`button`, ...args);
     static div = (...args) => DOM.makeElement(`div`, ...args);
+    static table = (...args) => DOM.makeElement(`table`, ...args);
+    static thead = (...args) => DOM.makeElement(`thead`, ...args);
+    static tbody = (...args) => DOM.makeElement(`tbody`, ...args);
     static h1 = (...args) => DOM.makeElement(`h1`, ...args);
     static h2 = (...args) => DOM.makeElement(`h2`, ...args);
     static h3 = (...args) => DOM.makeElement(`h3`, ...args);
@@ -15,6 +18,7 @@ export default class DOM {
     static p = (...args) => DOM.makeElement(`p`, ...args);
     static span = (...args) => DOM.makeElement(`span`, ...args);
     static img = (...args) => DOM.makeElement(`img`, ...args);
+    static tr = (...args) => DOM.makeElement(`tr`, ...args);
     static td = (...args) => DOM.makeElement(`td`, ...args);
     static attributeExceptions = [
       `role`,

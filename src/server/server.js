@@ -1,7 +1,9 @@
 import FlightSuretyApp from '../../build/contracts/FlightSuretyApp.json';
 import Config from './config.json';
 import Web3 from 'web3';
-import express from 'express';
+//import express from 'express';
+const express = require('express');
+const cors = require('cors');
 
 
 let config = Config['localhost'];
@@ -18,11 +20,18 @@ flightSuretyApp.events.OracleRequest({
 });
 
 const app = express();
-app.get('/api', (req, res) => {
-    res.send({
-      message: 'An API for use with your Dapp!'
-    })
-})
+app.use(cors());
+
+const apiRouter = require('./routers/apiRouter');
+
+app.use('/api', apiRouter);
+
+
+// app.get('/api', (req, res) => {
+//     res.send({
+//       message: 'An API for use with your Dapp!'
+//     })
+// })
 
 export default app;
 
