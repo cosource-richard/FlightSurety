@@ -35,7 +35,7 @@ contract FlightSuretyData {
 
     Flight[] flights;
 
-    mapping (string => Insurance[]) flightInsurance;
+   // mapping (string => Insurance[]) flightInsurance;
 
     mapping (address => Airline) airlines;
     address[] registeredAirlines;
@@ -45,6 +45,8 @@ contract FlightSuretyData {
 
     mapping (bytes32 => address) votes;
     mapping (address => uint) airlineVotes;
+
+    mapping (address => uint8[3]) registeredOracles;
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -229,6 +231,25 @@ contract FlightSuretyData {
 
         flights.push(flight) -1;
     }
+
+    function insertOracle 
+                        (
+                            address id,
+                            uint8[3] indexes
+                        )
+                        external
+    {
+        registeredOracles[id] = indexes;
+    }
+
+    function getOracle(address id)
+                        external
+                        view
+                        returns (uint8[3])
+    {
+        return  registeredOracles[id];
+    }
+
 
    /**
     * @dev Buy insurance for a flight

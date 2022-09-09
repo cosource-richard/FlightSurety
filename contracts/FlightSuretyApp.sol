@@ -272,13 +272,14 @@ contract FlightSuretyApp {
     uint8 private nonce = 0;    
 
     // Fee to be paid when registering oracle
-    uint256 public constant REGISTRATION_FEE = 1 ether;
+    uint256 public constant REGISTRATION_FEE = 10000 wei; //1 ether;
 
     // Number of oracles that must respond for valid status
     uint256 private constant MIN_RESPONSES = 3;
 
 
     struct Oracle {
+        address id;
         bool isRegistered;
         uint8[3] indexes;        
     }
@@ -323,9 +324,22 @@ contract FlightSuretyApp {
         uint8[3] memory indexes = generateIndexes(msg.sender);
 
         oracles[msg.sender] = Oracle({
+                                        id : msg.sender,
                                         isRegistered: true,
                                         indexes: indexes
                                     });
+        //Save Oracle
+        flightSuretyData.insertOracle(msg.sender, indexes);
+    }
+
+    function getOracle
+                            (
+                            )
+                            view
+                            external
+                            returns(uint8[3])
+    {
+        return flightSuretyData.getOracle(msg.sender);
     }
 
     function getMyIndexes
@@ -440,6 +454,8 @@ contract FlightSuretyApp {
 }  
 
 contract FlightSuretyData {
+    function getOracle(address id) view external returns (uint8[3]);
+    function insertOracle(address id,uint8[3] indexes) external;
     function insertAirline(string code, string name, address wallet) external;
     function registerAirline(address airline) external;
     function isAirline(address airline) view external returns(bool);
