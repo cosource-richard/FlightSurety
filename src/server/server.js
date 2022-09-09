@@ -23,9 +23,18 @@ flightSuretyApp.events.OracleRequest({
       // Get random index for oracle response     
       let result = event.returnValues;
       let totalSelectedOracles = 0;
-      const {index} = result;
+      const {index, airline, flight, timestamp} = result;
+
+      console.log(`Index ${index} Airline ${airline} Flight${flight} Timestamp ${timestamp}`);
+    
       oracles.forEach((oracle) => {
         if (oracle.indexes.indexOf(index) > -1){
+          //
+          //Unknown (0) On Time (10) Late Airline (20) Late Weather (30) Late Technical (40) Late Other (50)
+          //
+          let status = Math.floor((Math.random() * 6)) * 10;
+          await flightSuretyApp.methods.submitOracleResponse(index, airline, flight, timestamp, status).send
+                          ({ from: oracle.address, value: fee, gas : 4712388, gasPrice: 100000000000 });
           totalSelectedOracles += 1;
         }
       });
