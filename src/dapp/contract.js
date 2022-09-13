@@ -12,6 +12,7 @@ export default class Contract {
         this.owner = null;
         this.airlines = [];
         this.passengers = [];
+
     }
 
     initialize(callback) {
@@ -32,6 +33,7 @@ export default class Contract {
             callback();
         });
     }
+
 
     isOperational(callback) {
        let self = this;

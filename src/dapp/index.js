@@ -34,6 +34,10 @@ import './flightsurety.css';
         contract.isOperational((error, result) => {
             display('Operational Status', 'Check if contract is operational', [ { label: 'Operational Status', error: error, value: result} ]);
         });
+
+        // Oracle Report
+        console.log("Register Callback");
+        contract.registerOracleReport(getOracleReport);
     
 
         // User-submitted transaction
@@ -121,33 +125,6 @@ function displayFlights2(results) {
     })
 
 }
-
-flightSuretyApp.events.OracleRequest({
-    fromBlock: 0
-  }, function (error, event) {
-      if (error) console.log('richard' + error)
-      // Get random index for oracle response     
-      let result = event.returnValues;
-      let totalSelectedOracles = 0;
-      const {index, airline, flight, timestamp} = result;
-
-      console.log(`Index ${index} Airline ${airline} Flight${flight} Timestamp ${timestamp}`);
-    
-      oracles.forEach((oracle) => {
-        if (oracle.indexes.indexOf(index) > -1){
-          //
-          //Unknown (0) On Time (10) Late Airline (20) Late Weather (30) Late Technical (40) Late Other (50)
-          //
-          let status = Math.floor((Math.random() * 6)) * 10;
-          console.log(`Status ${status}`);
-          flightSuretyApp.methods.submitOracleResponse(index, airline, flight, timestamp, status).send
-                          ({ from: oracle.address, gas : 4712388, gasPrice: 100000000000 });
-          console.log(`Submitted ${status}`);
-          totalSelectedOracles += 1;
-        }
-      });
-      console.log(`Total oracles that responded ${totalSelectedOracles}`);
-    });
 
 
 
