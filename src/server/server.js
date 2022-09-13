@@ -33,8 +33,10 @@ flightSuretyApp.events.OracleRequest({
           //Unknown (0) On Time (10) Late Airline (20) Late Weather (30) Late Technical (40) Late Other (50)
           //
           let status = Math.floor((Math.random() * 6)) * 10;
-          await flightSuretyApp.methods.submitOracleResponse(index, airline, flight, timestamp, status).send
-                          ({ from: oracle.address, value: fee, gas : 4712388, gasPrice: 100000000000 });
+          console.log(`Status ${status}`);
+          flightSuretyApp.methods.submitOracleResponse(index, airline, flight, timestamp, status).send
+                          ({ from: oracle.address, gas : 4712388, gasPrice: 100000000000 });
+          console.log(`Submitted ${status}`);
           totalSelectedOracles += 1;
         }
       });

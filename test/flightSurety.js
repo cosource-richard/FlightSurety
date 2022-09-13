@@ -223,7 +223,7 @@ contract('Flight Surety Tests', async (accounts) => {
     // ARRANGE
     let fifthAirline = accounts[5];
     let sixthAirline = accounts[6];
-    let fee = web3.toWei(3, "kwei");
+    let fee = web3.utils.toWei(web3.utils.toBN(3), "kwei");
 
     // ACT
 
