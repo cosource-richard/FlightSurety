@@ -44,13 +44,13 @@ flightSuretyApp.events.OracleRequest({
     });
 
 
-flightSuretyApp.events.OracleReport({
+/*flightSuretyApp.events.OracleReport({
       fromBlock: 0
     }, function (error, event) {
         if (error) console.log('richard' + error)
         // Get random index for oracle response     
         console.log(`Total oracle report`, event);
-      });
+      }); */
 
 const app = express();
 app.use(cors());

@@ -36,8 +36,9 @@ import './flightsurety.css';
         });
 
         // Oracle Report
-        console.log("Register Callback");
-        contract.registerOracleReport(getOracleReport);
+        console.log("Register Report Begin");
+        contract.registerOracleReport();
+        console.log("Register Report End");
     
 
         // User-submitted transaction
@@ -57,13 +58,15 @@ import './flightsurety.css';
             let flightRef = element.cells[0].innerText;
             let button = element.cells[2];
                 button.addEventListener('click', () => {
+                    console.log("Register Report Listener");
                     // Write transaction
                     contract.fetchFlightStatus(flightRef, (error, result) => {
                         display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp} ]);
                     });
                 })
-            console.log(element.cells[0].innerText);
         });
+
+        console.log("Contract Load End");
     });
 
     
@@ -123,6 +126,8 @@ function displayFlights2(results) {
         row.appendChild(cell);
         displayDiv.appendChild(row);
     })
+
+    console.log("Displaying Flights End");
 
 }
 

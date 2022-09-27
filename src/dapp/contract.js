@@ -6,7 +6,8 @@ export default class Contract {
     constructor(network, callback) {
 
         let config = Config[network];
-        this.web3 = new Web3(new Web3.providers.HttpProvider(config.url));
+        //this.web3 = new Web3(new Web3.providers.HttpProvider(config.url));
+        this.web3 = new Web3(new Web3.providers.WebsocketProvider(config.url.replace('http', 'ws')));
         this.flightSuretyApp = new this.web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
         this.initialize(callback);
         this.owner = null;
@@ -55,4 +56,17 @@ export default class Contract {
                 callback(error, payload);
             });
     }
+
+    registerOracleReport() {
+        let self = this;
+        self.flightSuretyApp.events.OracleReport({
+            fromBlock: 'latest'
+          }, function (error, event) {
+              if (error) console.log('richard' + error)
+              // Get random index for oracle response     
+              console.log(`Contract oracle report`, event);
+            });
+     }
+
+    
 }
