@@ -386,6 +386,9 @@ contract FlightSuretyApp {
 
             emit FlightStatusInfo(airline, flight, timestamp, statusCode);
 
+            //As we have the status response close off further requests.
+            oracleResponses[key].isOpen = false;
+
             // Handle flight status as appropriate
             processFlightStatus(airline, flight, timestamp, statusCode);
         }

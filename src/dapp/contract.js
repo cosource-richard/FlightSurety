@@ -57,7 +57,7 @@ export default class Contract {
             });
     }
 
-    registerOracleReport() {
+    registerOracleReport(callback) {
         let self = this;
         self.flightSuretyApp.events.OracleReport({
             fromBlock: 'latest'
@@ -65,6 +65,19 @@ export default class Contract {
               if (error) console.log('richard' + error)
               // Get random index for oracle response     
               console.log(`Contract oracle report`, event);
+              callback(event);
+            });
+     }
+
+
+     registerFlightStatusInfo(callback) {
+        let self = this;
+        self.flightSuretyApp.events.FlightStatusInfo({
+            fromBlock: 'latest'
+          }, function (error, event) {
+              if (error) console.log('richard' + error)
+              // Get random index for oracle response     
+              callback(event);
             });
      }
 

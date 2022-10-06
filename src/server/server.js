@@ -17,7 +17,7 @@ const oracles = [];
 
 
 flightSuretyApp.events.OracleRequest({
-    fromBlock: 0
+    fromBlock: 'latest'
   }, function (error, event) {
       if (error) console.log('richard' + error)
       // Get random index for oracle response     

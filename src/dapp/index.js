@@ -37,7 +37,7 @@ import './flightsurety.css';
 
         // Oracle Report
         console.log("Register Report Begin");
-        contract.registerOracleReport();
+        contract.registerFlightStatusInfo(testEvents);
         console.log("Register Report End");
     
 
@@ -55,8 +55,8 @@ import './flightsurety.css';
 
         // adding the event listener by looping
         elements.forEach(element => {
-            let flightRef = element.cells[0].innerText;
-            let button = element.cells[2];
+            let flightRef = element.cells[2].innerText;
+            let button = element.cells[5];
                 button.addEventListener('click', () => {
                     console.log("Register Report Listener");
                     // Write transaction
@@ -82,6 +82,31 @@ function getFlightStatus (flightNo) {
     });
 }
 
+function testEvents(results){
+    //console.log("Callback events worked:" , results);
+    console.log("Test 3", results.returnValues);
+
+    let flightNo = results.returnValues.flight;
+    console.log("Flight ", flightNo);
+    let status = results.returnValues.status;
+    console.log("Status ", status);
+
+     // accessing the elements with same classname
+     const elements = document.querySelectorAll("table > tbody > tr");
+
+     // adding the event listener by looping
+     elements.forEach(element => {
+         let flightRef = element.cells[2].innerText;
+         if (flightRef === flightNo) {
+            element.cells[4].innerText = status;
+            let button = element.cells[5].getElementsByTagName("button")[0];
+            console.log("Button", button);
+            button.disabled = true;
+         }
+        
+     });
+}
+
 
 function display(title, description, results) {
     let displayDiv = DOM.elid("display-wrapper");
@@ -104,8 +129,10 @@ function displayFlights(results) {
   
     results.map((result) => {
         let row = table.appendChild(DOM.tr());
-        row.appendChild(DOM.td({}, result.title));
+        row.appendChild(DOM.td({}, result.origin));
+        row.appendChild(DOM.td({}, result.airline));
         row.appendChild(DOM.td({className:'flightRef'}, result.flightNo));
+        row.appendChild(DOM.td({}, result.scheduled));
         table.appendChild(row);
     })
     displayDiv.append(table);
@@ -117,8 +144,11 @@ function displayFlights2(results) {
   
     results.map((result) => {
         let row = displayDiv.appendChild(DOM.tr());
+        row.appendChild(DOM.td({}, result.origin));
+        row.appendChild(DOM.td({}, result.airline));
         row.appendChild(DOM.td({}, result.flightNo));
-        row.appendChild(DOM.td({}, result.title));
+        row.appendChild(DOM.td({}, result.scheduled));
+        row.appendChild(DOM.td({}, "Unknown"));
         let cell =  DOM.td({});
         let button = DOM.button({className:'btn btn-light'},'Submit to Oracles');
         //button.addEventListener('click', getFlightStatus(result.flightNo));
