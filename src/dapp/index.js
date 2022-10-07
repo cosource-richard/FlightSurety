@@ -61,7 +61,7 @@ import './flightsurety.css';
                     console.log("Register Report Listener");
                     // Write transaction
                     contract.fetchFlightStatus(flightRef, (error, result) => {
-                        display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp} ]);
+                        //display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp} ]);
                     });
                 })
         });
@@ -98,7 +98,30 @@ function testEvents(results){
      elements.forEach(element => {
          let flightRef = element.cells[2].innerText;
          if (flightRef === flightNo) {
-            element.cells[4].innerText = status;
+            //
+            //Unknown (0) On Time (10) Late Airline (20) Late Weather (30) Late Technical (40) Late Other (50)
+            //
+            let statusMessage = '';
+            switch(status) {
+                case '10':
+                    statusMessage = 'On Time';
+                  break;
+                case '20':
+                    statusMessage = 'Late Airline';
+                  break;
+                case '30':
+                    statusMessage = 'Late Weather';
+                  break;
+                case '40':
+                    statusMessage = 'Late Technical';
+                  break;
+                case '50':
+                    statusMessage = 'Late Other';
+                  break;
+                default:
+                    statusMessage = 'Unknown';
+              }
+            element.cells[4].innerText = statusMessage;
             let button = element.cells[5].getElementsByTagName("button")[0];
             console.log("Button", button);
             button.disabled = true;
