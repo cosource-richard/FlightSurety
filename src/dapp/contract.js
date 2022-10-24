@@ -9,6 +9,7 @@ export default class Contract {
         //this.web3 = new Web3(new Web3.providers.HttpProvider(config.url));
         this.web3 = new Web3(new Web3.providers.WebsocketProvider(config.url.replace('http', 'ws')));
         this.flightSuretyApp = new this.web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
+        //this.flightSuretyData = new this.web3.eth.Contract(FlightSuretyData.abi, config.dataAddress);
         this.initialize(callback);
         this.owner = null;
         this.airlines = [];
@@ -21,10 +22,13 @@ export default class Contract {
            
             this.owner = accts[0];
 
-            let counter = 1;
+            let counter = 2;
             
             while(this.airlines.length < 5) {
                 this.airlines.push(accts[counter++]);
+                this.registerAirline(accts[counter], accts[counter - 1], (response) => {
+                    console.log(response);
+                });
             }
 
             while(this.passengers.length < 5) {
@@ -34,7 +38,6 @@ export default class Contract {
             callback();
         });
     }
-
 
     isOperational(callback) {
        let self = this;
@@ -80,6 +83,19 @@ export default class Contract {
               callback(event);
             });
      }
+
+     registerAirline(airline, registeredAirline, callback) {
+        let self = this;
+        self.flightSuretyApp.methods
+            .registerAirline(airline)
+            .send({ from: registeredAirline, "gas": 4712388, "gasPrice": 100000000000 }, 
+                (error, result) => {
+                    if (error)
+                        callback(error);
+                    else 
+                        callback(result);
+                });
+    }
 
     
 }
