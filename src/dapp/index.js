@@ -28,6 +28,28 @@ import './flightsurety.css';
 
     // End
 
+
+     // Begin - Airlines
+    
+     
+
+     http.get('http://localhost:3000/api/airlines', res => {
+     let data = [];
+     
+     res.on('data', chunk => {
+         data.push(chunk);
+     });
+ 
+     res.on('end', () => {
+         const airlines = JSON.parse(Buffer.concat(data).toString());
+         displayAirlines(airlines);
+     });
+     }).on('error', err => {
+     console.log('Error: ', err.message);
+     });
+ 
+     // End
+
     let contract = new Contract('localhost', () => {
 
         // Read transaction
@@ -196,6 +218,31 @@ function displayFlights2(results) {
     })
 
     console.log("Displaying Flights End");
+
+}
+
+function displayAirlines(results) {
+    let displayDiv = DOM.elid("display-airlines");
+  
+    results.map((result) => {
+        let row = displayDiv.appendChild(DOM.tr());
+        row.appendChild(DOM.td({}, result.airline));
+        row.appendChild(DOM.td({}, "Unknown"));
+        
+        let cellRegister =  DOM.td({});
+        let buttonRegister = DOM.button({className:'btn btn-light'},'Register');
+        cellRegister.appendChild(buttonRegister);
+        row.appendChild(cellRegister);
+
+        let cellFund =  DOM.td({});
+        let buttonFund = DOM.button({className:'btn btn-light'},'Fund');
+        cellFund.appendChild(buttonFund);
+        row.appendChild(cellFund);
+
+        displayDiv.appendChild(row);
+    })
+
+    console.log("Displaying Airlines End");
 
 }
 
