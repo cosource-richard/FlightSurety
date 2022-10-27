@@ -73,15 +73,20 @@ import './flightsurety.css';
         // })
 
         // accessing the elements with same classname
-        const elements = document.querySelectorAll("table > tbody > tr");
+        //const elements = document.querySelectorAll("table > tbody > tr");
+        const tableFlights = document.getElementById("tblFlights");
+        const elements = tableFlights.querySelectorAll("tbody > tr");
+
 
         // adding the event listener by looping
         elements.forEach(element => {
             let flightRef = element.cells[2].innerText;
+            console.log('Flight Ref: ', flightRef);
             let button = element.cells[5];
                 button.addEventListener('click', () => {
                     console.log("Register Report Listener");
                     // Write transaction
+                    button.innerText = "Fetching status...";
                     contract.fetchFlightStatus(flightRef, (error, result) => {
                         //display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp} ]);
                     });
@@ -159,6 +164,7 @@ function testEvents(results){
                     statusMessage = 'Unknown';
               }
             element.cells[4].innerText = statusMessage;
+            element.cells[5].innerText = "";
             let button = element.cells[5].getElementsByTagName("button")[0];
             console.log("Button", button);
             button.disabled = true;
@@ -211,7 +217,6 @@ function displayFlights2(results) {
         row.appendChild(DOM.td({}, "Unknown"));
         let cell =  DOM.td({});
         let button = DOM.button({className:'btn btn-light'},'Submit to Oracles');
-        //button.addEventListener('click', getFlightStatus(result.flightNo));
         cell.appendChild(button);
         row.appendChild(cell);
         displayDiv.appendChild(row);

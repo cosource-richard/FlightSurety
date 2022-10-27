@@ -1,14 +1,18 @@
 [
     {
-       "airline":"Qantas"
+       "airline":"Qantas",
+       "wallet": "0xf8a541ff2eec648b5A7bD8A3c254c1D40DBF9c26" 
     },
     {
-      "airline":"Singapore Airlines"
+      "airline":"Singapore Airlines",
+      "wallet": "0x446dca2Ae5733233D39e147F3D0Fe1fF341C2878" 
     },
     {
-      "airline":"Emirates"
+      "airline":"Emirates",
+      "wallet": "0x5eA1eC55AB8F539e5be7a87E49d20FEE7BBD64bA" 
     },
     {
-      "airline":"Japan Airlines"
+      "airline":"Japan Airlines",
+      "wallet": "0x73Ae4D56bC7abA5326b8E90d6729d53461B6Aa01" 
     }
 ]
