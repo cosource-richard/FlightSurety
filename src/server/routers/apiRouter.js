@@ -8,7 +8,7 @@ apiRouter.route('/').get((req, res) => {
   res.send(flights);
 });
 
-apiRouter.route('/airlines').get((req, res) => {
+apiRouter.route('/airlines2').get((req, res) => {
   res.send(airlines);
 });
 

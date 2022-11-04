@@ -1,9 +1,12 @@
 import FlightSuretyApp from '../../build/contracts/FlightSuretyApp.json';
 import Config from './config.json';
 import Web3 from 'web3';
+
 //import express from 'express';
 const express = require('express');
 const cors = require('cors');
+
+let airlines = require('./data/airlines.json');
 
 
 let config = Config['localhost'];
@@ -65,6 +68,21 @@ app.use('/api', apiRouter);
  
   let fee = await flightSuretyApp.methods.REGISTRATION_FEE().call()
 
+  for(let airline in airlines){
+    let status = await flightSuretyApp.methods.getAirlineStatus(airlines[airline].wallet).call()
+    airlines[airline].status = status;
+}
+
+// fs.writeFile("src/server/data/airlines.json", airlines, 'utf8', function (err) {
+//   if (err) {
+//       console.log("An error occured while writing JSON Object to File.");
+//       return console.log(err);
+//   }
+
+//   console.log("JSON file has been saved.");
+// });
+
+
   for(let a=1; a < accounts.length ; a++) {     
     //
     // Check to see if the Oracle has already been registered.
@@ -99,6 +117,24 @@ app.use('/api', apiRouter);
 //     })
 // })
 
+
+app.get('/api2/airlines', (req, res) => {
+    res.send({
+      airlines
+    })
+})
+
+//  app.getAirlines = () => { 
+//   for(let airline in airlines){
+//     let status = flightSuretyApp.methods.getAirlineStatus(airlines[airline].wallet).call()
+//     airlines[airline].status = status;
+//   } 
+//   return airlines;
+// };
+
+//module.exports = "Hello World"; //airlines;
+//export {getAirlines, app}
+// export default getAirlines;
 export default app;
 
 

@@ -61,6 +61,16 @@ export default class Contract {
             });
     }
 
+    fetchAirlineStatus(airline, callback) {
+        let self = this;
+       
+        self.flightSuretyApp.methods
+            .getAirlineStatus(airline)
+            .send({ from: self.owner}, (error, result) => {
+                callback(result);
+            });
+    }
+
     registerOracleReport(callback) {
         let self = this;
         self.flightSuretyApp.events.OracleReport({

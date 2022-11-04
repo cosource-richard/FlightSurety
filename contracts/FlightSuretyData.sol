@@ -164,14 +164,26 @@ contract FlightSuretyData {
         registeredAirlines.push(airline) -1;
     }
 
-    function isAirline
+    function isAirlineRegistered 
                             (   
                                 address airline
                             )
-                            external
+                            public
+                            view
                             returns(bool)
     {
         return airlines[airline].isRegistered;
+    }
+
+    function isAirlineFunded
+                            (   
+                                address airline
+                            )
+                            public
+                            view
+                            returns(bool)
+    {
+        return airlines[airline].hasSubmittedFunds;
     }
 
     function countRegisteredAirlines() 

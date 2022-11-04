@@ -74,7 +74,7 @@ contract FlightSuretyApp {
 
     modifier registeredAirline()
     {
-        require(flightSuretyData.isAirline(msg.sender), "Airline is not registered");
+        require(flightSuretyData.isAirlineRegistered(msg.sender), "Airline is not registered");
         _;
     }
 
@@ -206,6 +206,31 @@ contract FlightSuretyApp {
                             returns(address[])
     {
         return flightSuretyData.getFundedAirlines();
+    }
+
+    function getAirlineStatus
+                            (
+                                address airline
+                            )
+                            view 
+                            external
+                            returns(string)
+    {
+        string memory status = "Not Registered";
+
+        if (flightSuretyData.isAirlineRegistered(airline))
+        {
+            if (flightSuretyData.isAirlineFunded(airline))
+            {
+                status = "Active";
+            }
+            else
+            {
+                status = "Not Funded";
+            }
+        }
+
+        return status;
     }
 
    /**
@@ -461,7 +486,8 @@ contract FlightSuretyData {
     function insertOracle(address id,uint8[3] indexes) external;
     function insertAirline(string code, string name, address wallet) external;
     function registerAirline(address airline) external;
-    function isAirline(address airline) view external returns(bool);
+    function isAirlineRegistered (address airline) view external returns(bool);
+    function isAirlineFunded (address airline) view external returns(bool);
     function countRegisteredAirlines() view external returns(uint);
     function updateVote(address airline, bytes32 key) external;
     function countAirlineVotes(address airline) view  external returns (uint);

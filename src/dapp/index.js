@@ -2,6 +2,7 @@
 import DOM from './dom';
 import Contract from './contract';
 import './flightsurety.css';
+import app from '../server/server';
 
 (async() => {
 
@@ -30,10 +31,8 @@ import './flightsurety.css';
 
 
      // Begin - Airlines
-    
-     
 
-     http.get('http://localhost:3000/api/airlines', res => {
+     http.get('http://localhost:3000/api2/airlines', res => {
      let data = [];
      
      res.on('data', chunk => {
@@ -92,6 +91,8 @@ import './flightsurety.css';
                     });
                 })
         });
+
+
 
         console.log("Contract Load End");
     });
@@ -214,7 +215,7 @@ function displayFlights2(results) {
         row.appendChild(DOM.td({}, result.airline));
         row.appendChild(DOM.td({}, result.flightNo));
         row.appendChild(DOM.td({}, result.scheduled));
-        row.appendChild(DOM.td({}, "Unknown"));
+        row.appendChild(DOM.td({}, ""));
         let cell =  DOM.td({});
         let button = DOM.button({className:'btn btn-light'},'Submit to Oracles');
         cell.appendChild(button);
@@ -228,21 +229,48 @@ function displayFlights2(results) {
 
 function displayAirlines(results) {
     let displayDiv = DOM.elid("display-airlines");
+
+    console.log(results);
+
+    // for(let result in results.airlines){
+      
+    // }
   
-    results.map((result) => {
+    results.airlines.map((result) => {
+          //
+        // Get Airline status
+        //
+        console.log(`result : ${result}`);
+        let status = result.status
+
+        console.log(status);
+
         let row = displayDiv.appendChild(DOM.tr());
-        row.appendChild(DOM.td({}, result.airline));
-        row.appendChild(DOM.td({}, "Unknown"));
+        row.appendChild(DOM.td({}, result.airline));  
+        row.appendChild(DOM.td({}, status));
         
         let cellRegister =  DOM.td({});
-        let buttonRegister = DOM.button({className:'btn btn-light'},'Register');
-        cellRegister.appendChild(buttonRegister);
+
+        if (status == "Not Registered"){
+            let buttonRegister = DOM.button({className:'btn btn-light'},'Register');
+            // buttonRegister.addEventListener('click', () => {
+            //     console.log("Register Airline");
+            // });
+
+            cellRegister.appendChild(buttonRegister);
+        }
+
+        if (status == "Not Funded"){
+            let buttonFund = DOM.button({className:'btn btn-light'},'Fund');
+            cellRegister.appendChild(buttonFund);
+        }
+        
         row.appendChild(cellRegister);
 
-        let cellFund =  DOM.td({});
-        let buttonFund = DOM.button({className:'btn btn-light'},'Fund');
-        cellFund.appendChild(buttonFund);
-        row.appendChild(cellFund);
+        // let cellFund =  DOM.td({});
+        // let buttonFund = DOM.button({className:'btn btn-light'},'Fund');
+        // cellFund.appendChild(buttonFund);
+        // row.appendChild(cellFund);
 
         displayDiv.appendChild(row);
     })
