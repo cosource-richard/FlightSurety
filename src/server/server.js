@@ -1,6 +1,7 @@
 import FlightSuretyApp from '../../build/contracts/FlightSuretyApp.json';
 import Config from './config.json';
 import Web3 from 'web3';
+import { query } from 'express';
 
 //import express from 'express';
 const express = require('express');
@@ -122,6 +123,30 @@ app.get('/api2/airlines', (req, res) => {
     res.send({
       airlines
     })
+})
+
+app.get('/api2/registerAirline', async(req, res) => {
+  let airline = req.query.wallet;
+  let accounts = await web3.eth.getAccounts();
+  await flightSuretyApp.methods.registerAirline(airline).send({from: accounts[1], gas : 4712388, gasPrice: 100000000000 });
+  let status = await flightSuretyApp.methods.getAirlineStatus(airline).call()
+  console.log(`Status: ${status}`);
+  res.send({
+    status: status
+  })
+})
+
+
+app.get('/api2/fundAirline', async(req, res) => {
+  let airline = req.query.wallet;
+  let fee = web3.utils.toWei(web3.utils.toBN(3), "kwei");
+  console.log(`Fee: ${fee}`);
+  await flightSuretyApp.methods.fund().send({from: airline, value: fee, gas : 4712388, gasPrice: 100000000000 });
+  let status = await flightSuretyApp.methods.getAirlineStatus(airline).call()
+  console.log(`Status: ${status}`);
+  res.send({
+    status: status
+  })
 })
 
 //  app.getAirlines = () => { 

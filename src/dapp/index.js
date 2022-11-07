@@ -1,8 +1,7 @@
-
+import axios from 'axios';
 import DOM from './dom';
 import Contract from './contract';
 import './flightsurety.css';
-import app from '../server/server';
 
 (async() => {
 
@@ -11,6 +10,8 @@ import app from '../server/server';
     // Begin
     
     const http = require('http');
+
+    console.log('Step 1: ');
 
     http.get('http://localhost:3000/api', res => {
     let data = [];
@@ -229,6 +230,7 @@ function displayFlights2(results) {
 
 function displayAirlines(results) {
     let displayDiv = DOM.elid("display-airlines");
+    displayDiv.innerHTML = '';
 
     console.log(results);
 
@@ -253,15 +255,38 @@ function displayAirlines(results) {
 
         if (status == "Not Registered"){
             let buttonRegister = DOM.button({className:'btn btn-light'},'Register');
-            // buttonRegister.addEventListener('click', () => {
-            //     console.log("Register Airline");
-            // });
+            buttonRegister.addEventListener('click', async() => {
+                console.log("Register Airline: " + result.wallet);
+                const res = await axios.get('http://localhost:3000/api2/registerAirline', 
+                    { 
+                        params: {
+                            wallet: result.wallet
+                        }
+                    }
+                    );
+                console.log("Response :" + res);
+            });
 
             cellRegister.appendChild(buttonRegister);
         }
 
         if (status == "Not Funded"){
             let buttonFund = DOM.button({className:'btn btn-light'},'Fund');
+            buttonFund.addEventListener('click', async() => {
+                console.log("Fund Airline: " + result.wallet);
+                const res = await axios.get('http://localhost:3000/api2/fundAirline', 
+                    { 
+                        params: {
+                            wallet: result.wallet
+                        }
+                    }
+                    );
+                console.log("Response :" + JSON.stringify(res.data));
+                console.log("Response :" + res.data.status);
+                result.status = res.data.status;
+                displayAirlines(results);
+            });
+
             cellRegister.appendChild(buttonFund);
         }
         
