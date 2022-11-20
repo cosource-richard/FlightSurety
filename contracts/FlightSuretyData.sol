@@ -35,7 +35,8 @@ contract FlightSuretyData {
 
     Flight[] flights;
 
-   // mapping (string => Insurance[]) flightInsurance;
+    mapping (string => Insurance[]) flightInsurance;
+    mapping(address => uint256)  passengerBalance;
 
     mapping (address => Airline) airlines;
     address[] registeredAirlines;
@@ -269,23 +270,35 @@ contract FlightSuretyData {
     */   
 
     function buy
-                            (                             
+                            (        
+                                address buyer,
+                                string flightNo,
+                                uint256 amount                     
                             )
                             external
                             payable
     {
-
+        flightInsurance[flightNo].push(Insurance(buyer, amount)) - 1;
     }
 
     /**
      *  @dev Credits payouts to insurees
     */
+    //
+    //1% is 100bps https://muens.io/how-to-calculate-percentages-in-solidity
+    //
     function creditInsurees
                                 (
+                                    address insuree,
+                                    uint256 bps,
+                                    string flightNo
                                 )
                                 external
-                                pure
     {
+        Insurance[] insurees = flightInsurance[flightNo];
+        for(uint256 i=0; i < insurees.length; i++){
+            insurees[i].amount = insurees[i].amount * bps / 10000;
+        }
     }
     
 
@@ -295,10 +308,19 @@ contract FlightSuretyData {
     */
     function pay
                             (
+                                address insuree
                             )
+                            payable
                             external
-                            pure
+                           
     {
+        require(passengerBalance[insuree] > 0, "Balance is 0.");
+
+        uint256 balance = passengerBalance[insuree];
+        passengerBalance[insuree] = 0;
+
+        address(insuree).transfer(balance);
+
     }
 
    /**

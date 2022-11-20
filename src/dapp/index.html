@@ -59,6 +59,73 @@
                 </tbody>
             </table>
         </div>
+
+        <h2>Passengers - Buy Insurance</h2>
+    
+        <div class="top-20">
+            <table class="table table-dark">
+                <thead>
+                  <tr>
+                    <th scope="col">Passenger</th>
+                    <th scope="col">Flight</th>
+                    <th scope="col">Insurance Amount</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody id="purchase-insurance">
+                    <tr>
+                        <td id="passenger-id"></td>
+                        <td id="insurance-flight">
+                          <select id="flight-select" class="form-select" aria-label="Default select example">
+                            <option selected value="0">Select Flight Number</option>
+                            <option value="QF180">QF180 - Norfolk Island</option>
+                            <option value="QF2">QF2 - London</option>
+                            <option value="SQ221">SQ221 - Singapore</option>
+                            <option value="EK412">EK412 - Dubai</option>
+                            <option value="JL51">JL51 - Tokyo</option>
+                          </select>
+                          <div id="insurance-error"class="alert alert-danger invisible" role="alert">
+                            Select a flight
+                          </div>
+                        </td>
+                        <td>
+                          <input id="insurance-amount" class="form-control" type="text" placeholder="1.0 ether" aria-label="default input example">
+                          <div id="amount-error"class="alert alert-danger invisible" role="alert">
+                            Value must be between 0 and 1 ether
+                          </div>
+                        </td>
+                        <td>
+                            <btn class="btn btn-primary" id="buy-insurance">Buy Insurance</btn>
+                        </td>
+                      </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>Passengers Account</h2>
+    
+        <div class="top-20">
+            <table class="table table-dark">
+                <thead>
+                  <tr>
+                    <th scope="col">Passenger</th>
+                    <th scope="col">Account Balance</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody id="purchase-account">
+                    <tr>
+                        <td id="wallet-id"></td>
+                        <td id="wallet-balance"></td>
+                        <td>
+                            <btn class="btn btn-primary" id="btn-withdraw">Withdraw</btn>
+                        </td>
+                      </tr>
+                </tbody>
+            </table>
+        </div>
+
+
         <div class="row top-20">
             <label class="form">Flight</label> <input type="text" id="flight-number"> <btn class="btn btn-primary" id="submit-oracle">Submit to Oracles</btn>
             <div>

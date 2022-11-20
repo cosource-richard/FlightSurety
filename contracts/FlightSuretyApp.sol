@@ -31,6 +31,8 @@ contract FlightSuretyApp {
     address private contractOwner;          // Account used to deploy contract
     FlightSuretyData flightSuretyData;
 
+    mapping(bytes32 => bool) insurancePurchaseHistory;   // Key - Address of buyer + flightcode
+
     struct Flight {
         bool isRegistered;
         uint8 statusCode;
@@ -192,6 +194,36 @@ contract FlightSuretyApp {
         //flightSuretyData.fund();
     }
 
+    function buy
+                            (        
+                                string flightNo               
+                            )
+                            external
+                            payable
+                            returns (bool)
+    {
+        require((msg.value > 0) && (msg.value <= 1 ether), "Insurance value should be greater than 0 and up to 1 ether]");
+        bytes32 key = keccak256(abi.encodePacked(msg.sender, flightNo));
+        require(!insurancePurchaseHistory[key], "Insurance has already been brought");
+
+        address(flightSuretyData).transfer(msg.value);
+        flightSuretyData.buy(msg.sender, flightNo, msg.value);
+        insurancePurchaseHistory[key] = true;
+
+        return insurancePurchaseHistory[key];
+    }
+
+     function withdraw
+                    () external
+                       payable 
+                       returns(bool success){
+        
+        flightSuretyData.pay(msg.sender);
+        return true;
+    } 
+
+
+
     function getBalance()
         view
         public
@@ -199,6 +231,8 @@ contract FlightSuretyApp {
     {
         return flightSuretyData.getBalance();
     }
+
+
 
     function getAirlines()
                             view
@@ -495,5 +529,7 @@ contract FlightSuretyData {
     function fundAirline(address airline) external;
     function getFundedAirlines()external view returns (address[]);
     function getBalance() external returns (uint balance);
-     function insertFlight(string number, string from, string to, uint departure, uint arrival) external;
+    function insertFlight(string number, string from, string to, uint departure, uint arrival) external;
+    function buy(address buyer, string flightNo, uint256 amount) external payable;
+    function pay (address insuree) payable external;
 }

@@ -13,7 +13,7 @@ export default class Contract {
         this.initialize(callback);
         this.owner = null;
         this.airlines = [];
-        this.passengers = [];
+        this.passenger = null;
 
     }
 
@@ -22,6 +22,7 @@ export default class Contract {
            
             this.owner = accts[0];
             this.airlines.push(accts[1]);
+            this.passenger = accts[9];
 
            /* let counter = 2;
             
