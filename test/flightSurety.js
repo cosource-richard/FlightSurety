@@ -221,9 +221,13 @@ contract('Flight Surety Tests', async (accounts) => {
   it('(airline) fund insurance', async () => {
     
     // ARRANGE
-    let fifthAirline = accounts[5];
-    let sixthAirline = accounts[6];
-    let fee = web3.utils.toWei(web3.utils.toBN(3), "kwei");
+
+    //console.log(JSON.stringify(web3.utils, null, 4))
+
+    let fifthAirline = accounts[15];
+    let sixthAirline = accounts[16];
+    //let fee = web3.utils.toWei(web3.utils.toBN(3), "kwei");
+    let fee = await config.flightSuretyApp.AIRLINE_FEE.call();
 
     // ACT
 
@@ -242,6 +246,36 @@ contract('Flight Surety Tests', async (accounts) => {
 
     // ASSERT
     assert.equal(result, fee * 2, "Incorrect Balance");
+
+  });
+
+  it('(passenger) purchase insurance', async () => {
+    
+    // ARRANGE
+    let passenger = accounts[9];
+    //let fee = web3.utils.toWei(web3.utils.toBN(3), "kwei");
+    let fee = await config.flightSuretyApp.INSURANCE_FEE.call();
+    
+
+    // ACT
+
+
+    let accountBalanceBefore = await web3.eth.getBalance(passenger);
+    let result = await config.flightSuretyApp.buy('TestFlightNo999', {from: passenger, value: fee});
+    let gasUsed = result.receipt.gasUsed;
+    let accountBalanceAfter = await web3.eth.getBalance(passenger);
+    let totalSpent = (accountBalanceBefore + gasUsed) - accountBalanceAfter;
+
+    console.log("Receipt: ", result.receipt);
+    console.log("Gas used: ", result.receipt.gasUsed);
+    console.log("Balance Before: ", accountBalanceBefore);
+    console.log("Balance After: ", accountBalanceAfter);
+    console.log("Total Spent: ", totalSpent);
+    //console.log("Balance: ", result);
+    //console.log("Gas used: ", response1.receipt.gasUsed);
+
+    // ASSERT
+    assert.equal(totalSpent, fee, "Insurance not purchased");
 
   });
  

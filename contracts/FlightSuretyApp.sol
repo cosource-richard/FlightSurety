@@ -25,8 +25,8 @@ contract FlightSuretyApp {
     uint8 private constant STATUS_CODE_LATE_OTHER = 50;
 
     //Costs
-    uint AIRLINE_FEE = 10000;
-    uint INSURANCE_FEE = 1000;
+    uint256 public constant AIRLINE_FEE = 10 ether;
+    uint256 public constant INSURANCE_FEE = 1 ether;
 
     address private contractOwner;          // Account used to deploy contract
     FlightSuretyData flightSuretyData;
@@ -331,7 +331,7 @@ contract FlightSuretyApp {
     uint8 private nonce = 0;    
 
     // Fee to be paid when registering oracle
-    uint256 public constant REGISTRATION_FEE = 10000 wei; //1 ether;
+    uint256 public constant REGISTRATION_FEE  = 1 ether;
 
     // Number of oracles that must respond for valid status
     uint256 private constant MIN_RESPONSES = 3;
