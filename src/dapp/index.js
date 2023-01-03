@@ -99,13 +99,19 @@ import './flightsurety.css';
         
         
             let amount = parseInt(DOM.elid('insurance-amount').value);
+            let flightID = DOM.elid('flight-select').value;
+
+            console.log('Buy Insurance: ', amount);
+            console.log('Flight ID: ', flightID);
 
             // Write transaction
             //await contract.buy(flightID, flightTime ,amount ,(error, result) => {
-            await contract.buy(flightID ,amount ,(error, result) => {
-                display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp}]);
+            contract.buy(flightID ,amount ,(error, result) => {
+                console.log('Insurance: ', result);
+                console.log('Error: ', error);
+                //display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp}]);
             });
-            DOM.elid('BuyFlightStatus').innerText = "Bought";
+            //DOM.elid('BuyFlightStatus').innerText = "Bought"; 
         })
 
 

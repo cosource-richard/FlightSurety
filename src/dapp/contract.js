@@ -118,5 +118,20 @@ export default class Contract {
                 });
     }
 
+    buy(flightNo, insuranceAmount, callback) {
+        let self = this;
+        self.flightSuretyApp.methods
+            .buy(flightNo)
+            .send({ from: self.passenger, value: insuranceAmount, "gas": 4712388, "gasPrice": 100000000000 }, 
+                (error, result) => {
+                    console.log('error ', error);
+                    console.log('result ', result);
+                    if (error)
+                        callback(error);
+                    else 
+                        callback(result);
+                });
+    }
+
     
 }
