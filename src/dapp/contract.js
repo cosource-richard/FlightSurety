@@ -14,6 +14,7 @@ export default class Contract {
         this.owner = null;
         this.airlines = [];
         this.passenger = null;
+        this.passengerWalletBalance = null;
 
     }
 
@@ -23,6 +24,14 @@ export default class Contract {
             this.owner = accts[0];
             this.airlines.push(accts[1]);
             this.passenger = accts[9];
+            //this.passengerWalletBalance = 
+            this.web3.eth.getBalance(this.passenger).then(balance => {
+                console.log('Promise Inside', balance);
+                this.passengerWalletBalance = this.web3.utils.fromWei(balance, 'ether');;
+                console.log('Promise Inside 2', this.passengerWalletBalance);
+                callback();
+            });
+            console.log('Promise', this.passengerWalletBalance);
 
            /* let counter = 2;
             
@@ -37,7 +46,7 @@ export default class Contract {
                 this.passengers.push(accts[counter++]);
             } */
 
-            callback();
+            //callback();
         });
     }
 

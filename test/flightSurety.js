@@ -224,8 +224,8 @@ contract('Flight Surety Tests', async (accounts) => {
 
     //console.log(JSON.stringify(web3.utils, null, 4))
 
-    let fifthAirline = accounts[15];
-    let sixthAirline = accounts[16];
+    let fifthAirline = accounts[25];
+    let sixthAirline = accounts[26];
     //let fee = web3.utils.toWei(web3.utils.toBN(3), "kwei");
     let fee = await config.flightSuretyApp.AIRLINE_FEE.call();
 
@@ -255,6 +255,7 @@ contract('Flight Surety Tests', async (accounts) => {
     let passenger = accounts[9];
     //let fee = web3.utils.toWei(web3.utils.toBN(3), "kwei");
     let fee = await config.flightSuretyApp.INSURANCE_FEE.call();
+    const gasPrice = 20000000000;
     
 
     // ACT
@@ -262,20 +263,105 @@ contract('Flight Surety Tests', async (accounts) => {
 
     let accountBalanceBefore = await web3.eth.getBalance(passenger);
     let result = await config.flightSuretyApp.buy('TestFlightNo999', {from: passenger, value: fee});
-    let gasUsed = result.receipt.gasUsed;
+    let gasCost = result.receipt.gasUsed * gasPrice;
     let accountBalanceAfter = await web3.eth.getBalance(passenger);
-    let totalSpent = (accountBalanceBefore + gasUsed) - accountBalanceAfter;
+    let totalSpent = BigInt(accountBalanceBefore) - (BigInt(gasCost) + BigInt(accountBalanceAfter))
 
-    console.log("Receipt: ", result.receipt);
-    console.log("Gas used: ", result.receipt.gasUsed);
-    console.log("Balance Before: ", accountBalanceBefore);
-    console.log("Balance After: ", accountBalanceAfter);
-    console.log("Total Spent: ", totalSpent);
-    //console.log("Balance: ", result);
+    // console.log("Receipt: ", result.receipt);
+    // console.log("Gas used: ", result.receipt.gasUsed);
+    // console.log("Gas cost: ", gasCost);
+    // console.log("Balance Before: ", accountBalanceBefore);
+    // console.log("Total: ", BigInt(accountBalanceAfter) + BigInt(gasCost));
+    // console.log("Balance After: ", accountBalanceAfter);
+    // console.log("Spent: ", totalSpent);
+    // console.log("Fee: ", BigInt(fee));
     //console.log("Gas used: ", response1.receipt.gasUsed);
 
     // ASSERT
-    assert.equal(totalSpent, fee, "Insurance not purchased");
+    assert.equal(totalSpent , BigInt(fee),  "Insurance not purchased");
+
+  });
+
+  it('(passenger) can not purchase insurance twice', async () => {
+    
+    // ARRANGE
+    let passenger = accounts[9];
+    //let fee = web3.utils.toWei(web3.utils.toBN(3), "kwei");
+    let fee = await config.flightSuretyApp.INSURANCE_FEE.call();
+    const gasPrice = 20000000000;
+    
+    // ACT
+
+    let accountBalanceBefore = await web3.eth.getBalance(passenger);
+    try {
+      let result = await config.flightSuretyApp.buy('TestFlightNo999', {from: passenger, value: fee});
+    }
+    catch(e) {
+
+    }
+    let accountBalanceAfter = await web3.eth.getBalance(passenger);
+
+ 
+    // ASSERT
+    assert.equal(accountBalanceBefore , accountBalanceAfter,  "Insurance purchased twice");
+
+  });
+
+  it('(passenger) credit insurees for late flight', async () => {
+    
+    // ARRANGE
+    let passenger = accounts[9];
+    let fee = await config.flightSuretyApp.INSURANCE_FEE.call();
+    const STATUS_CODE_LATE_AIRLINE = 20;
+    
+    // ACT
+
+    //
+    //1% is 100bps https://muens.io/how-to-calculate-percentages-in-solidity
+    //
+    await config.flightSuretyApp.processFlightStatus('TestFlightNo999', STATUS_CODE_LATE_AIRLINE , {from: passenger});
+    let accountBalance = await config.flightSuretyApp.getPassengerBalance.call({from: passenger});
+   
+    console.log("Balance: ", BigInt(accountBalance));
+  
+
+    // ASSERT
+    assert(accountBalance > fee,  "Account not credited");
+
+  });
+
+  it('(passenger) withdraw', async () => {
+    
+    // ARRANGE
+    let passenger = accounts[9];
+    const gasPrice = 20000000000;
+    
+
+    // ACT
+
+    let accountInsuranceBalanceBefore = await config.flightSuretyApp.getPassengerBalance.call({from: passenger});
+
+
+    let accountBalanceBefore = await web3.eth.getBalance(passenger);
+    let result = await config.flightSuretyApp.withdraw({from: passenger});
+    //let gasCost = result.receipt.gasUsed * gasPrice;
+    let accountBalanceAfter = await web3.eth.getBalance(passenger);
+
+    let accountInsuranceBalanceAfter = await config.flightSuretyApp.getPassengerBalance.call({from: passenger});
+
+    // console.log("Receipt: ", result.receipt);
+    // console.log("Gas used: ", result.receipt.gasUsed);
+    // console.log("Gas cost: ", gasCost);
+    console.log("Insurance Balance Before: ", accountInsuranceBalanceBefore);
+    console.log("Balance Before: ", accountBalanceBefore);
+    console.log("Balance After: ", accountBalanceAfter);
+    console.log("Insurance Balance After: ", accountInsuranceBalanceAfter);
+    // console.log("Spent: ", totalSpent);
+    // console.log("Fee: ", BigInt(fee));
+    //console.log("Gas used: ", response1.receipt.gasUsed);
+
+    // ASSERT
+    assert.equal(accountInsuranceBalanceAfter , 0,  "Could not withdraw insurance balance.");
 
   });
  

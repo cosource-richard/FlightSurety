@@ -289,7 +289,6 @@ contract FlightSuretyData {
     //
     function creditInsurees
                                 (
-                                    address insuree,
                                     uint256 bps,
                                     string flightNo
                                 )
@@ -298,8 +297,23 @@ contract FlightSuretyData {
         Insurance[] insurees = flightInsurance[flightNo];
         for(uint256 i=0; i < insurees.length; i++){
             insurees[i].amount = insurees[i].amount * bps / 10000;
+            passengerBalance[insurees[i].purchaser] += insurees[i].amount;
         }
+        //
+        // Accounts have been credits so remove the insurees
+        //
+        delete flightInsurance[flightNo];
     }
+
+    function getPassengerBalance     
+                                    (
+                                        address passenger
+                                    ) external view 
+                                    returns(uint256 balance)
+    {
+        return passengerBalance[passenger];
+    }    
+
     
 
     /**

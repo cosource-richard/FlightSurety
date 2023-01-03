@@ -94,6 +94,25 @@ import './flightsurety.css';
         });
 
 
+        // Buy Flight Insurance
+        DOM.elid('buy-insurance').addEventListener('click', async() => {
+        
+        
+            let amount = parseInt(DOM.elid('insurance-amount').value);
+
+            // Write transaction
+            //await contract.buy(flightID, flightTime ,amount ,(error, result) => {
+            await contract.buy(flightID ,amount ,(error, result) => {
+                display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp}]);
+            });
+            DOM.elid('BuyFlightStatus').innerText = "Bought";
+        })
+
+
+        DOM.elid('passenger-id').innerText = contract.passenger;
+        DOM.elid('wallet-id').innerText = contract.passenger;
+        DOM.elid('wallet-balance').innerText = contract.passengerWalletBalance;
+        
 
         console.log("Contract Load End");
     });
@@ -103,19 +122,7 @@ import './flightsurety.css';
 
 })();
 
-// Buy Flight Insurance
-DOM.elid('Buy').addEventListener('click', async() => {
-   
-   
-    let amount = parseInt(DOM.elid('buyAmount').value);
 
-    // Write transaction
-    //await contract.buy(flightID, flightTime ,amount ,(error, result) => {
-    await contract.buy(flightID ,amount ,(error, result) => {
-        display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp}]);
-    });
-    DOM.elid('BuyFlightStatus').innerText = "Bought";
-})
 
 
 

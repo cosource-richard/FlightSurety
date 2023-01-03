@@ -28,6 +28,9 @@ contract FlightSuretyApp {
     uint256 public constant AIRLINE_FEE = 10 ether;
     uint256 public constant INSURANCE_FEE = 1 ether;
 
+    //Payout Percentage (BPS) - 150%
+    uint256 public constant INSURANCE_PAYOUT_PERCENTAGE = 15000;
+
     address private contractOwner;          // Account used to deploy contract
     FlightSuretyData flightSuretyData;
 
@@ -213,6 +216,28 @@ contract FlightSuretyApp {
         return insurancePurchaseHistory[key];
     }
 
+     function creditInsurees
+                                (
+                                    uint256 bps,
+                                    string flightNo
+                                )
+                                external
+    {
+        flightSuretyData.creditInsurees(bps, flightNo);
+    }
+
+
+
+    function getPassengerBalance
+                                    (
+
+                                    ) external view 
+                                    returns(uint256 balance)
+    {
+        return flightSuretyData.getPassengerBalance(msg.sender);
+    } 
+
+
      function withdraw
                     () external
                        payable 
@@ -292,14 +317,14 @@ contract FlightSuretyApp {
     */  
     function processFlightStatus
                                 (
-                                    address airline,
-                                    string memory flight,
-                                    uint256 timestamp,
+                                    string memory flightNo,
                                     uint8 statusCode
                                 )
-                                internal
-                                pure
+                                public                            
     {
+        if (statusCode == STATUS_CODE_LATE_AIRLINE){
+            flightSuretyData.creditInsurees(INSURANCE_PAYOUT_PERCENTAGE, flightNo);
+        }
     }
 
 
@@ -449,7 +474,7 @@ contract FlightSuretyApp {
             oracleResponses[key].isOpen = false;
 
             // Handle flight status as appropriate
-            processFlightStatus(airline, flight, timestamp, statusCode);
+            processFlightStatus(flight, statusCode);
         }
     }
 
@@ -532,4 +557,6 @@ contract FlightSuretyData {
     function insertFlight(string number, string from, string to, uint departure, uint arrival) external;
     function buy(address buyer, string flightNo, uint256 amount) external payable;
     function pay (address insuree) payable external;
+    function getPassengerBalance  (address passenger) external view returns(uint256 balance);
+    function creditInsurees(uint256 bps,string flightNo) external;
 }
