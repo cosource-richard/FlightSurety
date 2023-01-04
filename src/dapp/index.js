@@ -110,17 +110,34 @@ import './flightsurety.css';
                 console.log('Insurance: ', result);
                 console.log('Error: ', error);
                 if (typeof result !== 'undefined') {
-                    activePolices(contract.passenger, flightID, amount);
+                    activePolices(contract.passenger, flightID, amount);              
                 }
+                    //
+                    // Get the balance of the account.
+                    //
+                    contract.insuranceBalance((errorBalance , resultBalance) => {
+                        console.log('Balance: ', resultBalance);
+                        console.log('Error: ', errorBalance);
+                        passengerBalance(contract.passenger, contract.passengerWalletBalance, resultBalance);
+                    });
                 //display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp}]);
             });
             //DOM.elid('BuyFlightStatus').innerText = "Bought"; 
         })
 
+        //
+        // Get the balance of the account.
+        //
+        contract.insuranceBalance((errorBalance , resultBalance) => {
+            console.log('Balance: ', resultBalance);
+            console.log('Error: ', errorBalance);
+            passengerBalance(contract.passenger, contract.passengerWalletBalance, resultBalance);
+        });
 
-        DOM.elid('passenger-id').innerText = contract.passenger;
-        DOM.elid('wallet-id').innerText = contract.passenger;
-        DOM.elid('wallet-balance').innerText = contract.passengerWalletBalance;
+
+       // DOM.elid('passenger-id').innerText = contract.passenger;
+       // DOM.elid('wallet-id').innerText = contract.passenger;
+       // DOM.elid('wallet-balance').innerText = contract.passengerWalletBalance;
         
 
         console.log("Contract Load End");
@@ -134,9 +151,7 @@ import './flightsurety.css';
 
 function activePolices (passengerID, flightNo, amount) {
     let purchasedInsurance = DOM.elid("purchased-insurance");
-
-    console.log('Amount: ', amount);
-    
+  
     let row = DOM.tr();
     row.appendChild(DOM.td({}, passengerID));
     row.appendChild(DOM.td({}, flightNo));
@@ -145,6 +160,17 @@ function activePolices (passengerID, flightNo, amount) {
     console.log(row);
 
     purchasedInsurance.append(row);
+}
+
+
+function passengerBalance (passengerID, walletBalance, insuraneBalance) {
+
+    console.log('Balance: ', insuraneBalance);
+
+    DOM.elid('wallet-id').innerText = passengerID;
+    DOM.elid('wallet-balance').innerText = walletBalance;
+    DOM.elid('insurance-balance').innerText = insuraneBalance;
+    
 }
 
 

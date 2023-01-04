@@ -226,26 +226,32 @@ contract('Flight Surety Tests', async (accounts) => {
 
     let fifthAirline = accounts[25];
     let sixthAirline = accounts[26];
-    //let fee = web3.utils.toWei(web3.utils.toBN(3), "kwei");
     let fee = await config.flightSuretyApp.AIRLINE_FEE.call();
 
     // ACT
 
-    //console.log("Payment: ", fee);
-    //console.log("Account Balance", web3.fromWei(web3.eth.getBalance(sixthAirline)));
-
-    let response1 = await config.flightSuretyApp.fund({from: fifthAirline, value: fee});
-    let response2 = await config.flightSuretyApp.fund({from: sixthAirline, value: fee});
-
     let result = await config.flightSuretyApp.getBalance.call(); 
-    let result2 = await config.flightSuretyApp.getAirlines.call(); 
-
-    console.log("Airlines: ", result2);
-    //console.log("Balance: ", result);
-    //console.log("Gas used: ", response1.receipt.gasUsed);
+    console.log('Result: ', result);
 
     // ASSERT
     assert.equal(result, fee * 2, "Incorrect Balance");
+
+  });
+
+  it('(passenger) initial balance is zero', async () => {
+    
+    // ARRANGE
+    let passenger = accounts[9];
+    
+    // ACT
+
+    let accountBalance = await config.flightSuretyApp.getPassengerBalance.call({from: passenger});
+   
+    console.log("Balance Zero: ", BigInt(accountBalance));
+  
+
+    // ASSERT
+    assert.equal(accountBalance , 0 ,  "Account not 0");
 
   });
 
@@ -257,6 +263,7 @@ contract('Flight Surety Tests', async (accounts) => {
     let fee = await config.flightSuretyApp.INSURANCE_FEE.call();
     const gasPrice = 20000000000;
     
+    console.log("Start");
 
     // ACT
 
@@ -275,12 +282,14 @@ contract('Flight Surety Tests', async (accounts) => {
     // console.log("Balance After: ", accountBalanceAfter);
     // console.log("Spent: ", totalSpent);
     // console.log("Fee: ", BigInt(fee));
-    //console.log("Gas used: ", response1.receipt.gasUsed);
+    // console.log("Gas used: ", response1.receipt.gasUsed);
 
     // ASSERT
     assert.equal(totalSpent , BigInt(fee),  "Insurance not purchased");
 
   });
+
+ 
 
   it('(passenger) can not purchase insurance twice', async () => {
     

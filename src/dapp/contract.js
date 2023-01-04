@@ -24,11 +24,10 @@ export default class Contract {
             this.owner = accts[0];
             this.airlines.push(accts[1]);
             this.passenger = accts[9];
+         
             //this.passengerWalletBalance = 
             this.web3.eth.getBalance(this.passenger).then(balance => {
-                console.log('Promise Inside', balance);
-                this.passengerWalletBalance = this.web3.utils.fromWei(balance, 'ether');;
-                console.log('Promise Inside 2', this.passengerWalletBalance);
+                this.passengerWalletBalance = this.web3.utils.fromWei(balance, 'ether');
                 callback();
             });
             console.log('Promise', this.passengerWalletBalance);
@@ -124,6 +123,19 @@ export default class Contract {
             .buy(flightNo)
             .send({ from: self.passenger, value: insuranceAmount, "gas": 4712388, "gasPrice": 100000000000 }, 
                 (error, result) => {
+                    callback(error, result);
+                });
+    }
+
+    insuranceBalance(callback) {
+        let self = this;
+        self.web3.eth.getBalance(self.passenger).then(balance => {
+            self.passengerWalletBalance = this.web3.utils.fromWei(balance, 'ether');
+        });
+        self.flightSuretyApp.methods
+            .getPassengerBalance()
+            .call({ from: self.passenger}, 
+                (error, result) => {                
                     callback(error, result);
                 });
     }

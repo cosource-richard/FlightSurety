@@ -231,7 +231,7 @@ contract FlightSuretyApp {
     function getPassengerBalance
                                     (
 
-                                    ) external view 
+                                    ) external view
                                     returns(uint256 balance)
     {
         return flightSuretyData.getPassengerBalance(msg.sender);

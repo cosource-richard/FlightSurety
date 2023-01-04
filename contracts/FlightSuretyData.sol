@@ -279,6 +279,7 @@ contract FlightSuretyData {
                             payable
     {
         flightInsurance[flightNo].push(Insurance(buyer, amount)) - 1;
+        passengerBalance[buyer] += amount;
     }
 
     /**
