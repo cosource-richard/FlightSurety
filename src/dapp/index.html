@@ -60,13 +60,12 @@
             </table>
         </div>
 
-        <h2>Passengers - Buy Insurance</h2>
+        <h2>Buy Insurance</h2>
     
         <div class="top-20">
             <table class="table table-dark">
                 <thead>
                   <tr>
-                    <th scope="col">Passenger</th>
                     <th scope="col">Flight</th>
                     <th scope="col">Insurance Amount</th>
                     <th scope="col"></th>
@@ -74,7 +73,6 @@
                 </thead>
                 <tbody id="purchase-insurance">
                     <tr>
-                        <td id="passenger-id"></td>
                         <td id="insurance-flight">
                           <select id="flight-select" class="form-control" aria-label="Default select example">
                             <option selected value="0">Select Flight Number</option>
@@ -102,6 +100,24 @@
             </table>
         </div>
 
+        <h2>Active Policies</h2>
+    
+        <div class="top-20">
+            <table class="table table-dark">
+                <thead>
+                  <tr>
+                    <th scope="col">Passenger</th>
+                    <th scope="col">Flight No.</th>
+                    <th scope="col">Amount</th>
+                    
+                  </tr>
+                </thead>
+                <tbody id="purchased-insurance">
+                    
+                </tbody>
+            </table>
+        </div>
+
         <h2>Passengers Account</h2>
     
         <div class="top-20">
@@ -109,7 +125,8 @@
                 <thead>
                   <tr>
                     <th scope="col">Passenger</th>
-                    <th scope="col">Account Balance</th>
+                    <th scope="col">Wallet Balance</th>
+                    <th scope="col">Insurance Balance</th>
                     <th scope="col"></th>
                   </tr>
                 </thead>
@@ -117,8 +134,9 @@
                     <tr>
                         <td id="wallet-id"></td>
                         <td id="wallet-balance"></td>
+                        <td id="insurance-balance"></td>
                         <td>
-                            <btn class="btn btn-primary" id="btn-withdraw">Withdraw</btn>
+                          <btn class="btn btn-primary" id="btn-withdraw">Withdraw</btn>
                         </td>
                       </tr>
                 </tbody>

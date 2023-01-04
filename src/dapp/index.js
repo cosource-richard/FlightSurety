@@ -109,6 +109,9 @@ import './flightsurety.css';
             contract.buy(flightID ,amount ,(error, result) => {
                 console.log('Insurance: ', result);
                 console.log('Error: ', error);
+                if (typeof result !== 'undefined') {
+                    activePolices(contract.passenger, flightID, amount);
+                }
                 //display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp}]);
             });
             //DOM.elid('BuyFlightStatus').innerText = "Bought"; 
@@ -129,6 +132,20 @@ import './flightsurety.css';
 })();
 
 
+function activePolices (passengerID, flightNo, amount) {
+    let purchasedInsurance = DOM.elid("purchased-insurance");
+
+    console.log('Amount: ', amount);
+    
+    let row = DOM.tr();
+    row.appendChild(DOM.td({}, passengerID));
+    row.appendChild(DOM.td({}, flightNo));
+    row.appendChild(DOM.td({}, amount.toString()));
+
+    console.log(row);
+
+    purchasedInsurance.append(row);
+}
 
 
 
