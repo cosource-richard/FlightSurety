@@ -329,7 +329,7 @@ contract FlightSuretyData {
                             external
                            
     {
-        require(passengerBalance[insuree] > 0, "Balance is 0.");
+        require(passengerBalance[insuree] > 0, "Balance is 0");
 
         uint256 balance = passengerBalance[insuree];
         passengerBalance[insuree] = 0;

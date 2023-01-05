@@ -119,6 +119,8 @@ export default class Contract {
 
     buy(flightNo, insuranceAmount, callback) {
         let self = this;
+        insuranceAmount = this.web3.utils.toWei(insuranceAmount.toString(), 'ether');
+        console.log("Insurance Amount: ", insuranceAmount );
         self.flightSuretyApp.methods
             .buy(flightNo)
             .send({ from: self.passenger, value: insuranceAmount, "gas": 4712388, "gasPrice": 100000000000 }, 
