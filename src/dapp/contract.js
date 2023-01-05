@@ -137,7 +137,10 @@ export default class Contract {
         self.flightSuretyApp.methods
             .getPassengerBalance()
             .call({ from: self.passenger}, 
-                (error, result) => {                
+                (error, result) => {   
+                    if (typeof result !== 'undefined') {
+                        result = this.web3.utils.fromWei(result, 'ether');
+                    }
                     callback(error, result);
                 });
     }

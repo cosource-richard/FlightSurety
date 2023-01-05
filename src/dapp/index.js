@@ -320,7 +320,8 @@ function displayAirlines(results) {
                         }
                     }
                     );
-                console.log("Response :" + res);
+                    result.status = res.data.status;
+                    displayAirlines(results);
             });
 
             cellRegister.appendChild(buttonRegister);
