@@ -42,6 +42,7 @@ contract FlightSuretyData {
     address[] registeredAirlines;
 
     address[] fundedAirlines;
+    address[] passengerInsurance;
     //mapping (address => bool) fundedAirlines;
 
     mapping (bytes32 => address) votes;
@@ -313,7 +314,22 @@ contract FlightSuretyData {
                                     returns(uint256 balance)
     {
         return passengerBalance[passenger];
-    }    
+    }  
+
+    function getInsurees  
+                            (
+                                string flightNo
+                            ) external
+                            returns(address[] passengers)
+    {
+        Insurance[] insurees = flightInsurance[flightNo];
+        delete passengerInsurance;
+         for(uint256 i=0; i < insurees.length; i++){
+            passengerInsurance.push(insurees[i].purchaser);
+        }
+
+        return passengerInsurance;
+    }
 
     
 

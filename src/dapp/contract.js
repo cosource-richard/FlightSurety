@@ -56,6 +56,13 @@ export default class Contract {
             .call({ from: self.owner}, callback);
     }
 
+    balance(callback) {
+        let self = this;
+        self.flightSuretyApp.methods
+             .getBalance()
+             .call({ from: self.owner}, callback);
+     }
+
     fetchFlightStatus(flight, callback) {
         let self = this;
         let payload = {
@@ -141,6 +148,16 @@ export default class Contract {
                     if (typeof result !== 'undefined') {
                         result = this.web3.utils.fromWei(result, 'ether');
                     }
+                    callback(error, result);
+                });
+    }
+
+    withdraw(callback) {
+        let self = this;
+        self.flightSuretyApp.methods
+            .withdraw()
+            .send({ from: self.passenger, "gas": 4712388, "gasPrice": 100000000000 }, 
+                (error, result) => {
                     callback(error, result);
                 });
     }

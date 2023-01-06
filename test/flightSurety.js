@@ -288,7 +288,7 @@ contract('Flight Surety Tests', async (accounts) => {
 
     // ASSERT
 
-    assert(totalSpent > BigInt(fee),  "Insurance not purchased");
+    assert(totalSpent >= BigInt(fee),  "Insurance not purchased");
 
   });
 

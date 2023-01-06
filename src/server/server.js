@@ -55,6 +55,7 @@ flightSuretyApp.events.OracleRequest({
         // Get random index for oracle response     
         console.log(`Total oracle report`, event);
       }); */
+      //
 
 const app = express();
 app.use(cors());
@@ -67,13 +68,9 @@ app.use('/api', apiRouter);
 
   let accounts = await web3.eth.getAccounts();
  
-  let fee = await flightSuretyApp.methods.REGISTRATION_FEE().call()
+  let fee = await flightSuretyApp.methods.REGISTRATION_FEE().call();
 
-  for(let airline in airlines){
-    let status = await flightSuretyApp.methods.getAirlineStatus(airlines[airline].wallet).call()
-    airlines[airline].status = status;
-}
-
+ 
 // fs.writeFile("src/server/data/airlines.json", airlines, 'utf8', function (err) {
 //   if (err) {
 //       console.log("An error occured while writing JSON Object to File.");
@@ -119,8 +116,14 @@ app.use('/api', apiRouter);
 // })
 
 
-app.get('/api2/airlines', (req, res) => {
-    res.send({
+ app.get('/api2/airlines', async (req, res) => {
+   
+  for(let airline in airlines){
+    let status = await flightSuretyApp.methods.getAirlineStatus(airlines[airline].wallet).call()
+    airlines[airline].status = status;
+  }
+
+  res.send({
       airlines
     })
 })
@@ -130,7 +133,6 @@ app.get('/api2/registerAirline', async(req, res) => {
   let accounts = await web3.eth.getAccounts();
   await flightSuretyApp.methods.registerAirline(airline).send({from: accounts[1], gas : 4712388, gasPrice: 100000000000 });
   let status = await flightSuretyApp.methods.getAirlineStatus(airline).call()
-  console.log(`Status: ${status}`);
   res.send({
     status: status
   })
@@ -139,11 +141,10 @@ app.get('/api2/registerAirline', async(req, res) => {
 
 app.get('/api2/fundAirline', async(req, res) => {
   let airline = req.query.wallet;
-  let fee = web3.utils.toWei(web3.utils.toBN(3), "kwei");
-  console.log(`Fee: ${fee}`);
+  let fee = web3.utils.toWei(web3.utils.toBN(10), "ether");
+  //let fee = await flightSuretyApp.methods.AIRLINE_FEE.call();
   await flightSuretyApp.methods.fund().send({from: airline, value: fee, gas : 4712388, gasPrice: 100000000000 });
   let status = await flightSuretyApp.methods.getAirlineStatus(airline).call()
-  console.log(`Status: ${status}`);
   res.send({
     status: status
   })

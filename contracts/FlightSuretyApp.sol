@@ -322,9 +322,18 @@ contract FlightSuretyApp {
                                 )
                                 public                            
     {
+        address[] memory insurees = flightSuretyData.getInsurees(flightNo);
+         
+        // Allow the insurance to be purchased again
+        
+        for(uint256 i=0; i < insurees.length; i++){
+             bytes32 key = keccak256(abi.encodePacked(insurees[i], flightNo));
+             insurancePurchaseHistory[key] = false;
+        }
         if (statusCode == STATUS_CODE_LATE_AIRLINE){
             flightSuretyData.creditInsurees(INSURANCE_PAYOUT_PERCENTAGE, flightNo);
         }
+       
     }
 
 
@@ -559,4 +568,5 @@ contract FlightSuretyData {
     function pay (address insuree) payable external;
     function getPassengerBalance  (address passenger) external view returns(uint256 balance);
     function creditInsurees(uint256 bps,string flightNo) external;
+    function getInsurees(string flightNo) external returns(address[] passengers);
 }

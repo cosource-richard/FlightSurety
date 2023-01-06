@@ -57,21 +57,17 @@ import './flightsurety.css';
             display('Operational Status', 'Check if contract is operational', [ { label: 'Operational Status', error: error, value: result} ]);
         });
 
+        // Read transaction
+        contract.balance((error, result) => {
+            console.log("Contract Balance: ", result);
+        });
+
         // Oracle Report
         console.log("Register Report Begin");
         contract.registerFlightStatusInfo(testEvents);
+
         console.log("Register Report End");
     
-
-        // User-submitted transaction
-        // DOM.elid('submit-oracle').addEventListener('click', () => {
-        //     let flight = DOM.elid('flight-number').value;
-        //     // Write transaction
-        //     contract.fetchFlightStatus(flight, (error, result) => {
-        //         display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp} ]);
-        //     });
-        // })
-
         // accessing the elements with same classname
         //const elements = document.querySelectorAll("table > tbody > tr");
         const tableFlights = document.getElementById("tblFlights");
@@ -104,6 +100,24 @@ import './flightsurety.css';
             console.log('Buy Insurance: ', amount);
             console.log('Flight ID: ', flightID);
 
+            if (flightID == "0") {
+                DOM.elid('flight-error').classList.remove("invisible");
+                DOM.elid('flight-error').classList.add("visible");
+                return;
+            } else {
+                DOM.elid('flight-error').classList.add("invisible");
+                DOM.elid('flight-error').classList.remove("visible");
+            }
+
+            if(isNaN(amount) || amount <= 0 || amount > 1){
+                DOM.elid('amount-error').classList.remove("invisible");
+                DOM.elid('amount-error').classList.add("visible");
+                return;
+            } else {
+                DOM.elid('amount-error').classList.add("invisible");
+                DOM.elid('amount-error').classList.remove("visible");
+            }
+
             // Write transaction
             //await contract.buy(flightID, flightTime ,amount ,(error, result) => {
             contract.buy(flightID ,amount ,(error, result) => {
@@ -133,6 +147,19 @@ import './flightsurety.css';
             console.log('Error: ', errorBalance);
             passengerBalance(contract.passenger, contract.passengerWalletBalance, resultBalance);
         });
+        //
+        //Withdraw funds
+        //
+        DOM.elid('btn-withdraw').addEventListener('click', () => {
+            contract.withdraw((error, result) => {
+                console.log('Withdraw: ', result);
+                console.log('Error: ', error);
+            });
+
+            contract.insuranceBalance((errorBalance , resultBalance) => {
+                passengerBalance(contract.passenger, contract.passengerWalletBalance, resultBalance);
+            });
+        })
 
 
        // DOM.elid('passenger-id').innerText = contract.passenger;
@@ -160,6 +187,49 @@ function activePolices (passengerID, flightNo, amount) {
     console.log(row);
 
     purchasedInsurance.append(row);
+}
+
+function updatePolices (flightNo) {
+
+    console.log('Update Policies');
+
+    //
+    // Remove flight from drop down 
+    //
+    let flightList = DOM.elid("flight-select")
+    let counter = 0; 
+    const options = flightList.querySelectorAll("option");
+
+    options.forEach(option => {
+       
+        let flightRef = option.value;
+
+        if (flightNo == flightRef){
+            flightList.remove(counter);
+        }
+        counter++;
+
+    });
+
+
+    let purchasedInsurance = DOM.elid("purchased-insurance");
+    let tableActivePolicies = DOM.elid("activePolicies");
+
+    // accessing the elements with same classname
+    const elements = purchasedInsurance.querySelectorAll("tr");
+
+    // adding the event listener by looping
+    elements.forEach(element => {
+        let passenger = element.cells[0].innerText;
+        let flightRef = element.cells[1].innerText;
+
+        if (flightNo == flightRef){
+
+            tableActivePolicies.deleteRow(element.rowIndex);
+            
+        }
+
+    });
 }
 
 
@@ -223,9 +293,10 @@ function testEvents(results){
               }
             element.cells[4].innerText = statusMessage;
             element.cells[5].innerText = "";
-            let button = element.cells[5].getElementsByTagName("button")[0];
-            console.log("Button", button);
-            button.disabled = true;
+            updatePolices(flightRef);
+            // let button = element.cells[5].getElementsByTagName("button")[0];
+            // console.log("Button", button);
+            // button.disabled = true;
          }
         
      });
