@@ -29,7 +29,7 @@ contract FlightSuretyApp {
     uint256 public constant INSURANCE_FEE = 1 ether;
 
     //Payout Percentage (BPS) - 150%
-    uint256 public constant INSURANCE_PAYOUT_PERCENTAGE = 15000;
+    uint256 public constant INSURANCE_PAYOUT_PERCENTAGE = 5000;
 
     address private contractOwner;          // Account used to deploy contract
     FlightSuretyData flightSuretyData;
@@ -323,17 +323,21 @@ contract FlightSuretyApp {
                                 public                            
     {
         address[] memory insurees = flightSuretyData.getInsurees(flightNo);
-         
+        //
         // Allow the insurance to be purchased again
-        
+        //
         for(uint256 i=0; i < insurees.length; i++){
              bytes32 key = keccak256(abi.encodePacked(insurees[i], flightNo));
              insurancePurchaseHistory[key] = false;
-        }
+        }  
         if (statusCode == STATUS_CODE_LATE_AIRLINE){
             flightSuretyData.creditInsurees(INSURANCE_PAYOUT_PERCENTAGE, flightNo);
+        } else {
+            //
+            // Adjust the balance to remove original amount that insurance was purchased
+            //
+            flightSuretyData.debitInsurees(flightNo);
         }
-       
     }
 
 
@@ -568,5 +572,6 @@ contract FlightSuretyData {
     function pay (address insuree) payable external;
     function getPassengerBalance  (address passenger) external view returns(uint256 balance);
     function creditInsurees(uint256 bps,string flightNo) external;
+    function debitInsurees(string flightNo) external;
     function getInsurees(string flightNo) external returns(address[] passengers);
 }

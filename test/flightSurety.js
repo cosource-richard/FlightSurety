@@ -331,11 +331,14 @@ contract('Flight Surety Tests', async (accounts) => {
     //
     //1% is 100bps https://muens.io/how-to-calculate-percentages-in-solidity
     //
+    let accountBalanceBefore = await config.flightSuretyApp.getPassengerBalance.call({from: passenger});
     await config.flightSuretyApp.processFlightStatus('TestFlightNo999', STATUS_CODE_LATE_AIRLINE , {from: passenger});
-    let accountBalance = await config.flightSuretyApp.getPassengerBalance.call({from: passenger});
+    let accountBalanceAfter = await config.flightSuretyApp.getPassengerBalance.call({from: passenger});
+    console.log('Account Balance Before: ', BigInt(accountBalanceBefore));
+    console.log('Account Balance After: ', BigInt(accountBalanceAfter));
    
     // ASSERT
-    assert(accountBalance > fee,  "Account not credited");
+    assert(accountBalanceAfter > accountBalanceBefore,  "Account not credited");
 
   });
 

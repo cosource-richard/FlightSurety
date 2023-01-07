@@ -301,8 +301,24 @@ contract FlightSuretyData {
             insurees[i].amount = insurees[i].amount * bps / 10000;
             passengerBalance[insurees[i].purchaser] += insurees[i].amount;
         }
+         //
+        // Accounts have been credited so remove the insurees
         //
-        // Accounts have been credits so remove the insurees
+        delete flightInsurance[flightNo];
+    }
+
+    function debitInsurees
+                                (
+                                    string flightNo
+                                )
+                                external
+    {
+        Insurance[] insurees = flightInsurance[flightNo];
+        for(uint256 i=0; i < insurees.length; i++){
+            passengerBalance[insurees[i].purchaser] -= insurees[i].amount;
+        }
+        //
+        // Accounts have been debited so remove the insurees
         //
         delete flightInsurance[flightNo];
     }
