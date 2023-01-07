@@ -64,7 +64,7 @@ import './flightsurety.css';
 
         // Oracle Report
         console.log("Register Report Begin");
-        contract.registerFlightStatusInfo(testEvents);
+        contract.registerFlightStatusInfo(flightStatus);
 
         console.log("Register Report End");
     
@@ -252,7 +252,7 @@ function getFlightStatus (flightNo) {
     });
 }
 
-function testEvents(results){
+function flightStatus(results){
     //console.log("Callback events worked:" , results);
     console.log("Test 3", results.returnValues);
 
